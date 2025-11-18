@@ -1,1 +1,74 @@
-yanxf
+你现在这个错误：
+
+```
+fatal: unable to access 'https://github.com/yanxuefengyan/yanxf.git/': SSL peer certificate or SSH remote key was not OK
+```
+
+说明 **Git 无法验证 GitHub 的 SSL 证书**，我们已经排除了地址问题，现在是**证书验证失败**。
+
+---
+
+### ✅ 下一步：逐项排查
+
+#### ✅ 1. **确认系统时间是否正确**
+SSL 证书验证对时间非常敏感。
+
+- Windows：右下角时间 → 右键 → **“调整日期和时间”** → **“立即同步”**
+- 如果时间差超过 5 分钟，**先同步再试一次**
+
+---
+
+#### ✅ 2. **检查是否开了代理或抓包工具**
+常见工具：
+
+- Clash、Fiddler、Charles、Proxifier、VPN
+- 这些会**插入自签证书**，导致 Git 报错
+
+**先全部关闭**，再运行：
+
+```bash
+git clone https://github.com/yanxuefengyan/yanxf.git
+```
+
+---
+
+#### ✅ 3. **更新 Git 和根证书**
+你可能是旧版 Git 或根证书缺失。
+
+- 下载安装最新 Git：[https://git-scm.com/](https://git-scm.com/)
+- 安装时勾选：
+  > ✅ **Use the native Windows Secure Channel library**
+
+安装完后重启终端，再试一次。
+
+---
+
+#### ✅ 4. **临时绕过 SSL 验证（仅用于测试）**
+如果你确认网络可信，**可以临时关闭验证**：
+
+```bash
+git config --global http.sslVerify false
+```
+
+然后再克隆：
+
+```bash
+git clone https://github.com/yanxuefengyan/yanxf.git
+```
+
+> ⚠️ 注意：这会降低安全性，**测试完后务必恢复**：
+```bash
+git config --global http.sslVerify true
+```
+
+---
+
+### ✅ 建议你按这个顺序操作：
+1. 同步系统时间
+2. 关闭所有代理/VPN
+3. 更新 Git
+4. 再克隆一次
+
+---
+
+如果你做完第 1 步（同步时间）和第 2 步（关闭代理）后，**愿意再试一次克隆**，把结果贴给我，我可以继续帮你判断是哪一层出问题。
